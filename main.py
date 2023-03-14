@@ -1,3 +1,4 @@
+import logging
 import os
 from dotenv import load_dotenv
 from tabulate import tabulate
@@ -35,17 +36,30 @@ async def start(message: types.Message):
 
 
 @dp.message_handler(commands=['help'])
-async def start(message: types.Message):
-    await message.reply(HELP_MSG)
+async def help_command(message: types.Message):
+    user_id = message.from_user.id
+    user = next((user for user in users if user.id == user_id), None)
+    logging.info(user)
+
+    if user:
+        await message.reply(HELP_MSG)
+    else:
+        await message.reply("Please use /start command first")
 
 
 @dp.message_handler(commands=['list'])
 async def random_ten(message: types.Message):
-    movies = notion.get_random_movies(10)
-    msg = []
-    for i, movie in enumerate(movies):
-        msg.append(['•', movie])
-    await message.reply(f"Here are 10 random movies from your list:\n\n" + tabulate(msg, tablefmt='plain'))
+    user_id = message.from_user.id
+    user = next((user for user in users if user.id == user_id), None)
+
+    if user:
+        movies = notion.get_random_movies(10)
+        msg = []
+        for movie in movies:
+            msg.append(['•', movie])
+        await message.reply(f"Here are 10 random movies from your list:\n\n" + tabulate(msg, tablefmt='plain'))
+    else:
+        await message.reply("Please use /start command first")
 
 
 @dp.message_handler(commands=['recommend'])
@@ -59,6 +73,17 @@ async def recommend(message: types.Message):
             await message.reply(f"Movie of the week is: \"{movie.item()}\"")
         else:
             await message.reply("There no movie left")
+    else:
+        await message.reply("Please use /start command first")
+
+
+@dp.message_handler()
+async def no_command(message: types.Message):
+    user_id = message.from_user.id
+    user = next((user for user in users if user.id == user_id), None)
+
+    if user:
+        await message.reply("I'm sorry, I don't know that command. Use /help to see available commands.")
     else:
         await message.reply("Please use /start command first")
 
