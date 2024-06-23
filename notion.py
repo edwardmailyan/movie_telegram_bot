@@ -48,7 +48,8 @@ class NotionClient:
         pages = self.get_pages()
         movies = pages[['properties.Title.title',
                         'properties.Status.select.name',
-                        'properties.Rating.number']].rename(columns=lambda x: x.split('.')[1])
+                        'properties.Rating.number',
+                        'properties.Opinion.select.name']].rename(columns=lambda x: x.split('.')[1])
         movies['Title'] = movies['Title'].apply(lambda x: x[0]['text']['content'])
         self.last_refresh_time = time.monotonic()
         return movies
