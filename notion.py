@@ -22,12 +22,12 @@ class NotionClient:
 
         page_size = 100 if get_all else num_pages
         payload = {"page_size": 100,
-                   "filter": {
-                       "property": "Status",
-                       "select": {
-                           "equals": "new"
-                       }
-                   }
+                   # "filter": {
+                   #     "property": "Status",
+                   #     "select": {
+                   #         "equals": "new"
+                   #     }
+                   # }
                    }
         response = requests.post(url, json=payload, headers=self.headers)
 
